@@ -1,0 +1,55 @@
+getwd()
+#set working directory
+setwd("F:/Dropbox/MASTERS AGECON/ASSISTANSHIP/GRA/Results/September 2015")
+df <- read.table("Stata_Oct_3_2015.csv", header = TRUE, sep = ",")
+
+#change column name
+colnames(df)[2] <- "network1"
+attach(df)
+
+#aggregate data
+aggdata <- aggregate(df[c("V10")], by=list(df$network1), FUN = sum, na.rm=TRUE)
+
+#import excel database in R
+dat1 = read.csv("Sep30_2015_R.csv", header = TRUE)
+
+
+dat1$city <- NA
+tail(dat1, n=1)
+dim(dat1)
+names(dat1)
+
+#update zipcodes
+dat1$zip <- clean.zipcodes(dat1$Q27_1_1_TEXT)
+
+#add fields from zipcode table to survey table
+dat3 <- merge(dat2, zipcode, by ="zip")
+
+#aggregate by states
+dat3$filled <- 1
+aggdata3 <- aggregate(dat3$filled, by=list(dat3$state), FUN = sum , na.rm=TRUE)
+setnames(aggdatacity,"x","count")
+aggdatacity <- aggdata4
+aggdata4 <- NULL
+ 
+
+#october 3
+survey = read.csv("Stata_Oct_3_2015.csv", header = TRUE)
+survey$zip <- clean.zipcodes(survey$Q27_1_1_TEXT)
+synthese <- merge(survey, zipcode, by ="zip", incomparables = "")
+synthese$filled <- 1
+aggstate <- aggregate(synthese$filled, by=list(synthese$state), FUN = sum )
+setnames(aggstate, "x", "count")
+aggcity <- aggregate(synthese$filled, by=list(synthese$city), FUN = sum )
+
+aggcity1 <-  merge(aggcity, zipcode, aggcity by "city", by ="zip", incomparables = "")
+synthese1 <- synthese[,c("city","state")]
+
+#descriptive stats
+gender <- aggregate(survey$filled, by=list(survey$Q38), FUN = sum)
+age <- aggregate(survey$filled, by=list(survey$Q37), FUN = sum)
+education <- aggregate(survey$filled, by=list(survey$Q39), FUN = sum)
+revenue <- aggregate(survey$filled, by=list(survey$Q30), FUN = sum)
+employeeFTP <- aggregate(survey$filled, by=list(survey$Q31_1_1_TEXT), FUN = sum)
+onlinemkt <- aggregate(survey$filled, by=list(survey$Q11_5), FUN = sum)
+socialmedia <- aggregate(survey$filled, by= list(survey$Q16_4), FUN = sum)
